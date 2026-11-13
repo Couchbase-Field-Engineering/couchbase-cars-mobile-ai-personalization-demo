@@ -10,8 +10,6 @@ A customer-facing car-rental app that personalizes itself from the customer cont
 * LLM calls go through AOM's **LLM Caching** gateway
 * every change to the rental (vehicle upgrades, extras, protection, bundles, services, check-in) runs as an RBAC-checked, traced and audited AOM tool call, with human approval for complimentary upgrades
 
-This is the car-rental sibling of the [Princess Cruises demo](https://github.com/Couchbase-Field-Engineering/princess-mobile-rag-personalization-demo): the same architecture, ported from cruises to rentals (locations instead of ships, car classes instead of stateroom categories, extras / protection / bundles / services instead of excursions / dining / packages / spa, a standby upgrade offer instead of an upgrade bid). The app's structure is based on [Fujio-Turner/mobile_field_service](https://github.com/Fujio-Turner/mobile_field_service): Expo / React Native, Couchbase Lite via `cbl-reactnative`, Sync Gateway session auth, and offline-first writes that sync when the radio comes back.
-
 *Screenshots: run the stack and open `https://localhost:5158`.*
 
 ---
