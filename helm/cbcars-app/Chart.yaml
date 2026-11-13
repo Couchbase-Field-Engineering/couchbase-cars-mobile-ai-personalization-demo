@@ -1,0 +1,13 @@
+apiVersion: v2
+name: cbcars-app
+description: >-
+  Couchbase Cars mobile personalization demo on Kubernetes: Couchbase Server
+  (customer profiles from the daily Amazon Redshift unload), Sync Gateway (Couchbase Lite
+  replication for phones), the backend (FastAPI + the cbcars-customer-care MCP
+  server, which registers itself with the Couchbase Agent Operations Manager),
+  the app in a browser, and a daily CronJob that drops a new mock Amazon Redshift
+  export.
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords: [couchbase, couchbase-lite, sync-gateway, mcp, rag, personalization]

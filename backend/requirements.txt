@@ -1,0 +1,9 @@
+fastapi==0.143.0
+uvicorn[standard]==0.54.0
+httpx==0.28.1
+couchbase==4.4.0
+# Same pin as AOM's own MCP servers/client (FastMCP API, 1.29.1 fixes a pydantic-settings warning).
+mcp==1.29.1
+pytest==8.3.5
+# Optional: live Redshift Data API mode (REDSHIFT_WORKGROUP / REDSHIFT_CLUSTER_ID). Mock mode needs nothing.
+# boto3==1.35.90

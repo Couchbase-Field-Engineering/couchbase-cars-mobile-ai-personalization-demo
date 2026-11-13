@@ -1,0 +1,36 @@
+# Copies of couchbase-init/init.sh, sync-gateway/db-config.json and
+# redshift/generate_mock_unload.py (deploy/k8s/deploy.sh refreshes chart/files/
+# from the repository before every install).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cbcars-app-scripts
+  labels: {{- include "cbcars.labels" . | nindent 4 }}
+data:
+  init.sh: |-
+{{ .Files.Get "files/init.sh" | indent 4 }}
+  db-config.json: |-
+{{ .Files.Get "files/db-config.json" | indent 4 }}
+  generate_mock_unload.py: |-
+{{ .Files.Get "files/generate_mock_unload.py" | indent 4 }}
+  export.sh: |-
+    #!/bin/sh
+    # Stands in for the Redshift UNLOAD destination: writes today's
+    # dt= partition if it isn't there yet, then keeps only the newest
+    # partitions. Run on first start (init container) and daily (CronJob).
+    set -eu
+    OUT=/data/redshift-unload
+    TODAY=$(TZ="${EXPORT_TZ:-UTC}" date +%Y-%m-%d)
+    STAMP=$(TZ="${EXPORT_TZ:-UTC}" date +%Y%m%d)
+    mkdir -p "$OUT"
+    if [ -f "$OUT/dt=$STAMP/manifest" ] && [ "${FORCE:-0}" != "1" ]; then
+      echo "Partition dt=$STAMP already exported"
+    else
+      echo "Exporting dt=$STAMP ({{ .Values.redshiftUnload.targetMb }} MiB) ..."
+      cd /srv && PYTHONPATH=/srv python /scripts/generate_mock_unload.py --export-date "$TODAY" \
+        --target-mb {{ .Values.redshiftUnload.targetMb }} --parts {{ .Values.redshiftUnload.parts }} --out "$OUT"
+    fi
+    ls -d "$OUT"/dt=* | sort | head -n -{{ .Values.redshiftUnload.keepPartitions }} | while read -r old; do
+      echo "Removing $old"; rm -rf "$old"
+    done
+    ls -la "$OUT"
