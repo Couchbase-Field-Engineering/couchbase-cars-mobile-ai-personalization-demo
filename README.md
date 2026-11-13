@@ -12,13 +12,13 @@ A customer-facing car-rental app that personalizes itself from the customer cont
 
 This is the car-rental sibling of the [Princess Cruises demo](https://github.com/Couchbase-Field-Engineering/princess-mobile-rag-personalization-demo): the same architecture, ported from cruises to rentals (locations instead of ships, car classes instead of stateroom categories, extras / protection / bundles / services instead of excursions / dining / packages / spa, a standby upgrade offer instead of an upgrade bid). The app's structure is based on [Fujio-Turner/mobile_field_service](https://github.com/Fujio-Turner/mobile_field_service): Expo / React Native, Couchbase Lite via `cbl-reactnative`, Sync Gateway session auth, and offline-first writes that sync when the radio comes back.
 
-*Screenshots: run the stack and open `http://localhost:8081`.*
+*Screenshots: run the stack and open `https://localhost:5158`.*
 
 ---
 
 ## How the demo opens
 
-`http://<host>:8081/story` is **Personalization That Drives**, an eight-chapter story for the room before the live app, about cutting the LLM cost of an AI concierge with the Agent Operations Manager. Use ←/→ to move between chapters, **N** for talking points and ☾ for dark mode:
+`https://<host>:5158/story` is **Personalization That Drives**, an eight-chapter story for the room before the live app, about cutting the LLM cost of an AI concierge with the Agent Operations Manager. Use ←/→ to move between chapters, **N** for talking points and ☾ for dark mode:
 
 1. **The question costs money.** Live chat has hours and a queue; a naive LLM chatbot pays the model for every question; in the garage nothing answers at all. It closes with Olivia's two questions from the LAX parking structure, both answered from her phone.
 2. **Where the LLM bill comes from.** Four cost drivers (repeat questions, context rebuilt every turn, unscoped retrieval, no answer offline) and the fix for each: AOM's LLM Cache, Context Cache, scoped RAG application, and cached context synced to Couchbase Lite.
@@ -219,15 +219,23 @@ If the RAG application is created before the backend has published a playbook, i
 
 Configure an LLM provider key in AOM to get generated answers. Without one, AOM returns a labelled stub: the backend then writes the answer itself from the same retrieved context, and AOM still reports the LLM-cache status (hit or miss).
 
-Then open **http://localhost:8081/story** for the story that opens the demo, **http://localhost:8081** for the app in a browser, or **http://localhost:8200** for a page linking every service.
+Then open **https://localhost:5158/story** for the story that opens the demo, **https://localhost:5158** for the app in a browser, or **http://localhost:8200** for a page linking every service.
 
 | Port | Service |
 |---|---|
-| `8081` | **The app in a browser** (`web` service), shown inside a phone frame (add `?frame=0` for full width): same screens and documents, synced over REST instead of Couchbase Lite |
+| `5158` | **The app in a browser** over HTTPS, behind the sign-in page (`web` service), shown inside a phone frame (add `?frame=0` for full width): same screens and documents, synced over REST instead of Couchbase Lite |
 | `8200` | Backend API + MCP server (`/cbcars/mcp`); `/` lists every link |
 | `4984` | Sync Gateway public, which is what phones replicate with: `ws://<host>:4984/cbcars` |
 | `127.0.0.1:4985` | Sync Gateway admin |
 | `127.0.0.1:18091` | Couchbase Web Console (Administrator / password123) |
+
+**Sign-in and HTTPS.** The browser UI (the app, the story page and everything else the `web` container serves) is on **`https://<host>:5158`** and opens on a sign-in page:
+
+| Username | Password |
+|---|---|
+| `demo` | `Couchbase123!` |
+
+Change them with `DEMO_USERNAME` / `DEMO_PASSWORD` in `.env` (Compose) or `web.auth.username` / `web.auth.password` (Helm). The container serves a self-signed certificate it generates on first start, so the browser warns once; add the address people use to `TLS_HOSTS` (Compose) so it is in the certificate, or serve a real one by mounting `tls.crt` / `tls.key` at `/etc/nginx/tls` (Helm: `web.tls.secretName`). Plain `http://` on the same port redirects to HTTPS, and `/signout` ends the session. The sign-in covers the browser UI only: the backend API and Sync Gateway ports are unchanged.
 
 Ports are chosen so this stack runs alongside AOM (8090, 8091-8096). The Compose ports are the same as the Princess demo's, so run one of the two Compose stacks at a time (the Kubernetes values below give each demo its own ports).
 
@@ -275,7 +283,7 @@ It runs four steps:
 | `backend` | Loads the Redshift unload into Couchbase and serves the MCP server. Self-registers with AOM (`AOM_AUTO_REGISTER`, see below) |
 | `redshift-unload` PVC | Holds the export. The backend's init container writes today's 100 MiB mock partition on first start |
 | `redshift-daily-unload` CronJob | 05:00 America/New_York: writes a new partition (as the Amazon Redshift destination would) and keeps the newest 2. The backend picks it up within 5 minutes |
-| `web` | The phone-framed app on 8083 (8081 in Compose). nginx proxies `/api` to the backend, so the browser needs only one URL |
+| `web` | The phone-framed app on 5158 (HTTPS, behind the sign-in page). nginx proxies `/api` to the backend, so the browser needs only one URL |
 
 **Self-registration.** No register script is needed in the cluster. With `AOM_AUTO_REGISTER=true`, the backend does the following on startup and retries until AOM is up:
 
@@ -290,8 +298,8 @@ Progress is in `/api/status` under `aom.registration`.
 | URL on the node (192.168.111.4) | |
 |---|---|
 | `https://45.52.200.223:4111` | AOM dashboard the demo registers with (`admin` / `AOM_ADMIN_PASSWORD`; set in `values-mother.yaml`, the in-cluster AOM on `:3111` is the alternative) |
-| `http://…:8083/story` | The story: start here |
-| `http://…:8083` | The app |
+| `https://…:5158/story` | The story: start here |
+| `https://…:5158` | The app |
 | `http://…:8202/api/status` | Backend status |
 | `ws://…:4987/cbcars` | Sync Gateway for Couchbase Lite (point a device build's `EXPO_PUBLIC_SG_URL` here, and `EXPO_PUBLIC_API_URL` at `:8202`) |
 
@@ -458,7 +466,7 @@ redshift/           mock UNLOAD generator; unload/ the UNLOAD job, view and Data
 couchbase-init/     bucket / scope / collections / indexes
 sync-gateway/       bootstrap + database config with per-collection sync functions
 scripts/            register_with_aom.py, run_chatbot_workload.py, reset_demo.py, setup-corporate-ca.sh
-web/                nginx image serving the browser build of the app on :8081 (proxies /api to the backend)
+web/                nginx image serving the browser build of the app over HTTPS on :5158, behind the sign-in page (proxies /api to the backend)
 helm/cbcars-app/      Helm chart for the demo (Couchbase, Sync Gateway, backend, daily unload CronJob, web)
 deploy/k8s/         deploy.sh + values for the K3s node "mother" (AOM and the demo)
 data/               the Redshift unload landing folder

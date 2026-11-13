@@ -101,8 +101,8 @@ def current_customer(authorization: str | None = Header(default=None)) -> str:
 async def index():
     """Landing page: where everything in the demo lives."""
     rows = [
-        ("http://localhost:8081/story", "The story: why Couchbase, not Redis, for an offline-first AI customer app (start here)"),
-        ("http://localhost:8081", "The app in a browser (docker compose service <code>web</code>)"),
+        ("https://localhost:5158/story", "The story: why Couchbase, not Redis, for an offline-first AI customer app (start here)"),
+        ("https://localhost:5158", "The app in a browser (docker compose service <code>web</code>)"),
         ("http://localhost:8200/api/status", "Backend status: Redshift unload load, Redshift playbook, Knowledge Base publishing, AOM, Sync Gateway"),
         ("http://localhost:8200/docs", "Backend API (OpenAPI)"),
         ("http://localhost:8200/cbcars/mcp", "MCP server <code>cbcars-customer-care</code> (called by AOM)"),
@@ -115,7 +115,7 @@ async def index():
 <style>body{{font-family:-apple-system,Arial,sans-serif;max-width:760px;margin:48px auto;padding:0 16px;color:#0B1530}}
 h1{{color:#000000}} li{{margin:10px 0}} a{{color:#EC1218;font-weight:600}}</style></head>
 <body><h1>Couchbase Cars personalization demo</h1>
-<p>This is the backend. Open the app at <a href="http://localhost:8081">http://localhost:8081</a>.
+<p>This is the backend. Open the app at <a href="https://localhost:5158">https://localhost:5158</a>.
 Loaded Redshift unload: <b>{STATE.get("export_date") or "loading..."}</b> ({loader.STATUS.get("state")}).</p>
 <ul>{items}</ul></body></html>"""
 

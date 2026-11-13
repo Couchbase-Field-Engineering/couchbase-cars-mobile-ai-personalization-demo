@@ -24,10 +24,10 @@ aom:
 # The Royal Caribbean demo (release royal-app) holds 8081 / 8200 / 4984 on
 # mother and the Princess demo (princess-app) holds 8082 / 8201 / 4986, so
 # this demo publishes the next free port of each:
-#   8083 the app, 8202 the backend API, 4987 Sync Gateway (Couchbase Lite).
+#   5158 the app (HTTPS, behind the sign-in page), 8202 the backend API, 4987 Sync Gateway (Couchbase Lite).
 # AOM's dashboard is on 3111 (agent-ops chart, values-k3s.yaml).
 web:
-  service: { type: LoadBalancer, port: 8083 }
+  service: { type: LoadBalancer, port: 5158 }
 backend:
   service: { type: LoadBalancer, port: 8202 }
 syncGateway:

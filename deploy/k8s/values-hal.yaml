@@ -17,9 +17,9 @@ aom:
   dashboardUrl: https://45.52.200.223:3111
 
 # Same ports as on mother, so the scripts' defaults (--backend <host>:8201) and the
-# README hold on either node: 8082 the app, 8201 the backend API, 4986 Sync Gateway.
+# README hold on either node: 5158 the app (HTTPS, behind the sign-in page), 8201 the backend API, 4986 Sync Gateway.
 web:
-  service: { type: LoadBalancer, port: 8082 }
+  service: { type: LoadBalancer, port: 5158 }
 backend:
   service: { type: LoadBalancer, port: 8201 }
 syncGateway:
