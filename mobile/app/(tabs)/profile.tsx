@@ -100,11 +100,11 @@ export default function Profile() {
         </View>
       </Card>
 
-      <SectionTitle title="Agent Operations Manager" />
+      <SectionTitle title="Couchbase Labs Agent Operations Manager" />
       <Card style={{ padding: 16, gap: 8 }}>
         <Text style={styles.meta}>
-          Every booking you make here becomes a request that the Couchbase Cars Rental Concierge agent runs through Couchbase AOM: RBAC and tool scope,
-          human approval for goodwill upgrades, a trace and an audit entry. Concierge answers use AOM's Knowledge Base, memory and LLM cache.
+          Every booking you make here becomes a request that the Couchbase Cars Rental Concierge agent runs through Couchbase Labs Agent Operations Manager: RBAC and tool scope,
+          human approval for goodwill upgrades, a trace and an audit entry. Concierge answers use Couchbase Labs Agent Operations Manager's Knowledge Base, memory and LLM cache.
         </Text>
         <Row icon="link-outline" label="Backend" value={API_URL} />
         <Row icon="finger-print-outline" label="Customer ID" value={session?.customer_id ?? '—'} />

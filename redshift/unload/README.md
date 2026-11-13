@@ -42,7 +42,7 @@ The view joins:
 
 Segment memberships and scores can change during the day as the customer
 browses, books or is re-scored. When the concierge assembles a customer's
-context (an AOM Context Cache miss), it reads the customer's *current* row
+context (a Couchbase Labs Agent Operations Manager Context Cache miss), it reads the customer's *current* row
 over the **Redshift Data API** - no JDBC driver, IAM or Secrets Manager
 auth, and the call is traceable in CloudTrail:
 
@@ -51,7 +51,7 @@ auth, and the call is traceable in CloudTrail:
     DescribeStatement / GetStatementResult
 
 That round trip (roughly 120-350 ms) is the `source_latency_ms` the Context
-Cache records: the context is stored in AOM and in Couchbase with the real
+Cache records: the context is stored in Couchbase Labs Agent Operations Manager and in Couchbase with the real
 build time, keyed by the unload date and the profile revision, so a booking
 or the next unload invalidates it, and the next question is a cache hit
 instead of another query. The same Data API serves the playbook table

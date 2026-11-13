@@ -16,7 +16,7 @@ the rows in effect today over the Redshift Data API:
     ORDER BY sort_order
 
 and renders them, with the catalog, into the *Customer Care Playbook <date>*
-document it publishes to the AOM Knowledge Base (`backend/app/knowledge.py`,
+document it publishes to the Couchbase Labs Agent Operations Manager Knowledge Base (`backend/app/knowledge.py`,
 `playbook_markdown`). The RAG application is re-scoped to that document, and
 the same entries are synced to the phone inside the `catalog` document so
 the app can answer the common questions from Couchbase Lite offline.

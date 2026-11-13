@@ -133,7 +133,7 @@ export type ActionRequest = {
   charge_usd?: number;
   governed?: boolean;
   trace_id?: string | null;
-  /** AOM agent identity that ran it: the concierge, or the Vehicle Upgrade Agent for upgrades. */
+  /** Couchbase Labs Agent Operations Manager agent identity that ran it: the concierge, or the Vehicle Upgrade Agent for upgrades. */
   agent?: 'cbcars-rental-concierge' | 'cbcars-upgrade-agent' | string;
   memories_recalled?: number;
   remembered?: boolean;
